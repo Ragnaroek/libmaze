@@ -5,9 +5,15 @@ pub struct SquareMaze {
 
 impl SquareMaze {
     pub fn new(width: usize, height: usize) -> SquareMaze {
-        // TODO init Vec with 1111_1111 maze cell data!
-        return SquareMaze{cells: Vec::with_capacity(width*height)}
+        let size = width*height;
+        let mut cells = Vec::with_capacity(size);
+        for i in 0..size {
+            cells.insert(i, 255);
+        }
+        return SquareMaze{cells: cells};
     }
+
+    // TODO Impl generation algorithm (recursive!)
 
     //Only for testing!
     pub fn raw_cell0(self) -> u8 {
