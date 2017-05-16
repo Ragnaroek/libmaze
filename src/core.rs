@@ -1,5 +1,4 @@
 
-// TODO Impl wall carving
 // TODO Impl generation algorithm (recursive!)
 
 #[derive(PartialEq, Debug, Copy, Clone)]
@@ -16,6 +15,19 @@ pub struct SquareMaze {
     height: usize
 }
 
+fn wall_bitmask(dir: WallDirection, upper: bool) -> u8 {
+    let mut mask = match dir {
+        WallDirection::NORTH => 0x01,
+        WallDirection::EAST  => 0x02,
+        WallDirection::SOUTH => 0x04,
+        WallDirection::WEST  => 0x08,
+    };
+    if upper {
+        mask = mask << 4;
+    }
+    return mask;
+}
+
 impl SquareMaze {
     pub fn new(width: usize, height: usize) -> SquareMaze {
         let size = width*height;
@@ -26,18 +38,25 @@ impl SquareMaze {
         return SquareMaze{cells, width, height};
     }
 
+    fn cell_index(&self, x: usize, y: usize) -> usize {
+        return y * (self.width/2) + x;
+    }
+
     pub fn wall(&self, dir: WallDirection, x: usize, y: usize) -> bool {
         self.check_bounds(x, y);
 
-        let cell = self.cells[y * (self.width/2) + x];
-        if x.trailing_zeros() == 0 { //even
-            println!("even")
-        } else { //odd
-            println!("odd")
-        }
+        let cell = self.cells[self.cell_index(x, y)];
+        let mask = wall_bitmask(dir, x%2!=0);
+        return (cell & mask) != 0;
+    }
 
-        print!("cell {}", cell);
-        return false
+    pub fn carve(&mut self, dir: WallDirection, x: usize, y: usize) {
+        self.check_bounds(x, y);
+
+        let ix = self.cell_index(x, y);
+        let cell = self.cells[ix];
+        let mask = !wall_bitmask(dir, x%2!=0);
+        self.cells[ix] = cell & mask;
     }
 
     fn check_bounds(&self, x: usize, y: usize) -> () {
@@ -47,10 +66,5 @@ impl SquareMaze {
         if y >= self.height {
             panic!("Out of bound cell access {} >= height {}", y, self.height)
         }
-    }
-
-    //Only for testing!
-    pub fn raw_cell0(self) -> u8 {
-        return self.cells[0];
     }
 }
