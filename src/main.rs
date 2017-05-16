@@ -5,5 +5,6 @@ use maze::gen;
 
 fn main() {
     let mut maze = SquareMaze::new(10, 10);
-    gen::recursive(&maze);
+    let seed = [1, 1, 1, 1];
+    gen::recursive(&maze, seed);
 }

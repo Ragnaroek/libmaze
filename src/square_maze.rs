@@ -26,6 +26,18 @@ fn wall_bitmask(dir: WallDirection, upper: bool) -> u8 {
     return mask;
 }
 
+static SW_NBS  : [WallDirection; 2] = [WallDirection::NORTH, WallDirection::EAST];
+static SE_NBS  : [WallDirection; 2] = [WallDirection::NORTH, WallDirection::WEST];
+static NE_NBS  : [WallDirection; 2] = [WallDirection::SOUTH, WallDirection::WEST];
+static NW_NBS  : [WallDirection; 2] = [WallDirection::EAST, WallDirection::SOUTH];
+static N_NBS  : [WallDirection; 3] = [WallDirection::EAST, WallDirection::SOUTH, WallDirection::WEST];
+static E_NBS  : [WallDirection; 3] = [WallDirection::NORTH, WallDirection::SOUTH, WallDirection::WEST];
+static S_NBS  : [WallDirection; 3] = [WallDirection::NORTH, WallDirection::EAST, WallDirection::WEST];
+static W_NBS  : [WallDirection; 3] = [WallDirection::NORTH, WallDirection::EAST, WallDirection::SOUTH];
+
+static ALL_NBS : [WallDirection; 4] = [WallDirection::NORTH, WallDirection::EAST,
+                                       WallDirection::SOUTH, WallDirection::WEST];
+
 impl SquareMaze {
     pub fn new(width: usize, height: usize) -> SquareMaze {
         let size = width*height;
@@ -55,6 +67,38 @@ impl SquareMaze {
         let cell = self.cells[ix];
         let mask = !wall_bitmask(dir, x%2!=0);
         self.cells[ix] = cell & mask;
+    }
+
+    // y=height-1 oooooooooooooo
+    //
+    //
+    // x=0        00000000000000 x=width-1
+    pub fn neighbours(&self, x: usize, y: usize) -> &[WallDirection] {
+        if x == 0 {
+            if y == 0 {
+                return &SW_NBS;
+            }
+            if y == self.height-1 {
+                return &NW_NBS;
+            }
+            return &W_NBS;
+        }
+        if x == self.width-1 {
+            if y == 0 {
+                return &SE_NBS;
+            }
+            if y == self.height-1 {
+                return &NE_NBS;
+            }
+            return &E_NBS;
+        }
+        if y == self.height-1 {
+            return &N_NBS;
+        }
+        if x == 0 {
+            return &S_NBS
+        }
+        return &ALL_NBS;
     }
 
     fn check_bounds(&self, x: usize, y: usize) -> () {

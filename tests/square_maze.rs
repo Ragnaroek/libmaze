@@ -59,3 +59,18 @@ fn should_panic_if_index_out_of_range_on_wall_carving() {
     let mut maze = SquareMaze::new(10, 10);
     maze.carve(WallDirection::NORTH, 10, 10);
 }
+
+#[test]
+fn should_get_neighbours() {
+    let maze = SquareMaze::new(10, 10);
+    assert_eq!(maze.neighbours(0,0), [WallDirection::NORTH, WallDirection::EAST]);
+    assert_eq!(maze.neighbours(0,1), [WallDirection::NORTH, WallDirection::EAST, WallDirection::SOUTH]);
+    assert_eq!(maze.neighbours(0,9), [WallDirection::EAST, WallDirection::SOUTH]);
+    assert_eq!(maze.neighbours(5,9), [WallDirection::EAST, WallDirection::SOUTH, WallDirection::WEST]);
+    assert_eq!(maze.neighbours(9,9), [WallDirection::SOUTH, WallDirection::WEST]);
+    assert_eq!(maze.neighbours(9,5), [WallDirection::NORTH, WallDirection::SOUTH, WallDirection::WEST]);
+    assert_eq!(maze.neighbours(9,0), [WallDirection::NORTH, WallDirection::WEST]);
+    assert_eq!(maze.neighbours(5,0), [WallDirection::NORTH, WallDirection::EAST, WallDirection::WEST]);
+
+    assert_eq!(maze.neighbours(5,5), [WallDirection::NORTH, WallDirection::EAST, WallDirection::SOUTH, WallDirection::WEST]);
+}
