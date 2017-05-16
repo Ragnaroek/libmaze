@@ -1,6 +1,4 @@
 
-// TODO Impl generation algorithm (recursive!)
-
 #[derive(PartialEq, Debug, Copy, Clone)]
 pub enum WallDirection {
     NORTH,

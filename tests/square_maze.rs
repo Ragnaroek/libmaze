@@ -1,6 +1,6 @@
 extern crate maze;
 
-use maze::core::{SquareMaze, WallDirection};
+use maze::square_maze::{SquareMaze, WallDirection};
 
 #[test]
 fn should_have_all_cells_walled_after_init() {
