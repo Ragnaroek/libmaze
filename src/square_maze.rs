@@ -9,8 +9,9 @@ pub enum WallDirection {
 
 pub struct SquareMaze {
     cells: Vec<u8>,
-    width: usize,
-    height: usize
+    visited: Vec<u8>,
+    pub width: usize,
+    pub height: usize
 }
 
 fn wall_bitmask(dir: WallDirection, upper: bool) -> u8 {
@@ -40,12 +41,18 @@ static ALL_NBS : [WallDirection; 4] = [WallDirection::NORTH, WallDirection::EAST
 
 impl SquareMaze {
     pub fn new(width: usize, height: usize) -> SquareMaze {
-        let size = width*height;
+        let size = ((width/2)+1)*height;
         let mut cells = Vec::with_capacity(size);
         for i in 0..size {
             cells.insert(i, 255);
         }
-        return SquareMaze{cells, width, height};
+
+        let visited_size = ((width*height)/8)+1;
+        let mut visited = Vec::with_capacity(visited_size);
+        for i in 0..visited_size {
+            visited.insert(i, 0);
+        }
+        return SquareMaze{cells, visited, width, height};
     }
 
     fn cell_index(&self, x: usize, y: usize) -> usize {
@@ -69,11 +76,13 @@ impl SquareMaze {
         self.cells[ix] = cell & mask;
     }
 
-    // y=height-1 oooooooooooooo
+    // y=height-1 00000000000000
     //
     //
     // x=0        00000000000000 x=width-1
     pub fn neighbours(&self, x: usize, y: usize) -> &[WallDirection] {
+        self.check_bounds(x, y);
+
         if x == 0 {
             if y == 0 {
                 return &SW_NBS;
@@ -82,8 +91,7 @@ impl SquareMaze {
                 return &NW_NBS;
             }
             return &W_NBS;
-        }
-        if x == self.width-1 {
+        } else if x == self.width-1 {
             if y == 0 {
                 return &SE_NBS;
             }
@@ -95,10 +103,28 @@ impl SquareMaze {
         if y == self.height-1 {
             return &N_NBS;
         }
-        if x == 0 {
+        if y == 0 {
             return &S_NBS
         }
         return &ALL_NBS;
+    }
+
+    pub fn visited(&self, x: usize, y: usize) -> bool {
+        let bit_index = y * self.width + x;
+        let byte_index = bit_index/8;
+        let byte = self.visited[byte_index];
+        let mask = 1 << (bit_index % 8);
+
+        return (byte & mask) != 0;
+    }
+
+    pub fn mark_visited(&mut self, x: usize, y: usize) {
+        let bit_index = y * self.width + x;
+        let byte_index = bit_index/8;
+        let byte = self.visited[byte_index];
+        let mask = 1 << (bit_index % 8);
+
+        self.visited[byte_index] = byte | mask;
     }
 
     fn check_bounds(&self, x: usize, y: usize) -> () {
