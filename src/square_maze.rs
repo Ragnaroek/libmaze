@@ -27,6 +27,22 @@ fn wall_bitmask(dir: WallDirection, upper: bool) -> u8 {
     return mask;
 }
 
+fn dir_ix_x(x: usize, n: WallDirection) -> usize {
+    match n {
+        WallDirection::WEST => x - 1,
+        WallDirection::EAST => x + 1,
+        _ => x
+    }
+}
+
+fn dir_ix_y(y: usize, n: WallDirection) -> usize {
+    match n {
+        WallDirection::NORTH => y + 1,
+        WallDirection::SOUTH => y - 1,
+        _ => y
+    }
+}
+
 static SW_NBS  : [WallDirection; 2] = [WallDirection::NORTH, WallDirection::EAST];
 static SE_NBS  : [WallDirection; 2] = [WallDirection::NORTH, WallDirection::WEST];
 static NE_NBS  : [WallDirection; 2] = [WallDirection::SOUTH, WallDirection::WEST];
@@ -110,12 +126,17 @@ impl SquareMaze {
     }
 
     pub fn visited(&self, x: usize, y: usize) -> bool {
+        self.check_bounds(x, y);
+        
         let bit_index = y * self.width + x;
         let byte_index = bit_index/8;
         let byte = self.visited[byte_index];
         let mask = 1 << (bit_index % 8);
 
         return (byte & mask) != 0;
+    }
+    pub fn visited_neighbour(&self, x: usize, y: usize, n: WallDirection) -> bool {
+        return self.visited(dir_ix_x(x, n), dir_ix_y(y, n));
     }
 
     pub fn mark_visited(&mut self, x: usize, y: usize) {

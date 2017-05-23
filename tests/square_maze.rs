@@ -83,6 +83,13 @@ fn should_get_neighbours() {
 }
 
 #[test]
+#[should_panic]
+fn should_panic_if_index_out_of_range_for_visited() {
+    let mut maze = SquareMaze::new(5, 7);
+    maze.visited(5, 7);
+}
+
+#[test]
 fn should_have_initial_visited_state_of_false() {
     let maze = SquareMaze::new(10, 10);
     for x in 0..10 {
@@ -110,4 +117,29 @@ fn should_maintain_visited_state() {
     assert!(!maze.visited(9,9));
     maze.mark_visited(9,9);
     assert!(maze.visited(9,9));
+}
+
+#[test]
+#[should_panic]
+fn should_panic_if_index_out_of_range_for_neighbours_unvisited() {
+    let mut maze = SquareMaze::new(5, 5);
+    maze.visited_neighbour(5, 5, WallDirection::NORTH);
+}
+
+#[test]
+#[should_panic]
+fn should_panic_if_neighbour_out_of_range_for_neighbours_unvisited() {
+    let mut maze = SquareMaze::new(5, 5);
+    maze.visited_neighbour(4, 4, WallDirection::NORTH);
+}
+
+#[test]
+fn should_get_visited_state_of_neighbour() {
+    let mut maze = SquareMaze::new(10, 10);
+    maze.mark_visited(0, 1);
+    assert!(maze.visited_neighbour(0, 0, WallDirection::NORTH));
+    assert!(!maze.visited_neighbour(0, 0, WallDirection::EAST));
+
+    maze.mark_visited(1, 0);
+    assert!(maze.visited_neighbour(0, 0, WallDirection::EAST));
 }
