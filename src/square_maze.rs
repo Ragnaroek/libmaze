@@ -8,23 +8,25 @@ pub enum WallDirection {
 }
 
 pub struct SquareMaze {
-    cells: Vec<u8>,
+    horizontal_walls: Vec<u8>,
+    vertical_walls: Vec<u8>,
     visited: Vec<u8>,
     pub width: usize,
     pub height: usize
 }
 
-fn wall_bitmask(dir: WallDirection, upper: bool) -> u8 {
-    let mut mask = match dir {
-        WallDirection::NORTH => 0x01,
-        WallDirection::EAST  => 0x02,
-        WallDirection::SOUTH => 0x04,
-        WallDirection::WEST  => 0x08,
-    };
-    if upper {
-        mask = mask << 4;
-    }
-    return mask;
+fn wall_bit_set(walls: &Vec<u8>, i: usize) -> bool {
+    let byte_ix = i/8;
+    let bit_ix = i%8;
+    let byte = walls[byte_ix];
+    return (byte & (1 << bit_ix)) != 0;
+}
+
+fn unset_wall_bit(walls: &mut Vec<u8>, i: usize) {
+    let byte_ix = i/8;
+    let bit_ix = i%8;
+    let byte = walls[byte_ix];
+    walls[byte_ix] = byte & !(1 << bit_ix)
 }
 
 fn dir_ix_x(x: usize, n: WallDirection) -> usize {
@@ -57,10 +59,18 @@ static ALL_NBS : [WallDirection; 4] = [WallDirection::NORTH, WallDirection::EAST
 
 impl SquareMaze {
     pub fn new(width: usize, height: usize) -> SquareMaze {
-        let size = ((width/2)+1)*height;
-        let mut cells = Vec::with_capacity(size);
-        for i in 0..size {
-            cells.insert(i, 255);
+
+        let h_size = (((width+1)*height)/8)+1;
+        let v_size = (((height+1)*width)/8)+1;
+
+        let mut h_walls = Vec::with_capacity(h_size);
+        for i in 0..h_size {
+            h_walls.insert(i, 255);
+        }
+
+        let mut v_walls = Vec::with_capacity(v_size);
+        for i in 0..v_size {
+            v_walls.insert(i, 255);
         }
 
         let visited_size = ((width*height)/8)+1;
@@ -68,28 +78,29 @@ impl SquareMaze {
         for i in 0..visited_size {
             visited.insert(i, 0);
         }
-        return SquareMaze{cells, visited, width, height};
-    }
-
-    fn cell_index(&self, x: usize, y: usize) -> usize {
-        return y * (self.width/2) + x;
+        return SquareMaze{horizontal_walls: h_walls, vertical_walls: v_walls, visited, width, height};
     }
 
     pub fn wall(&self, dir: WallDirection, x: usize, y: usize) -> bool {
         self.check_bounds(x, y);
 
-        let cell = self.cells[self.cell_index(x, y)];
-        let mask = wall_bitmask(dir, x%2!=0);
-        return (cell & mask) != 0;
+        match dir {
+            WallDirection::WEST  => wall_bit_set(&self.horizontal_walls, x+y*self.width),
+            WallDirection::EAST  => wall_bit_set(&self.horizontal_walls, (x+1)+y*self.width),
+            WallDirection::SOUTH => wall_bit_set(&self.vertical_walls, y+x*self.height),
+            WallDirection::NORTH => wall_bit_set(&self.vertical_walls, (y+1)+x*self.height)
+        }
     }
 
     pub fn carve(&mut self, dir: WallDirection, x: usize, y: usize) {
         self.check_bounds(x, y);
 
-        let ix = self.cell_index(x, y);
-        let cell = self.cells[ix];
-        let mask = !wall_bitmask(dir, x%2!=0);
-        self.cells[ix] = cell & mask;
+        match dir {
+            WallDirection::WEST  => unset_wall_bit(&mut self.horizontal_walls, x+y*self.width),
+            WallDirection::EAST  => unset_wall_bit(&mut self.horizontal_walls, (x+1)+y*self.width),
+            WallDirection::SOUTH => unset_wall_bit(&mut self.vertical_walls, y+x*self.height),
+            WallDirection::NORTH => unset_wall_bit(&mut self.vertical_walls, (y+1)+x*self.height)
+        }
     }
 
     // y=height-1 00000000000000
@@ -127,7 +138,7 @@ impl SquareMaze {
 
     pub fn visited(&self, x: usize, y: usize) -> bool {
         self.check_bounds(x, y);
-        
+
         let bit_index = y * self.width + x;
         let byte_index = bit_index/8;
         let byte = self.visited[byte_index];

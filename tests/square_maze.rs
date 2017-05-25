@@ -63,7 +63,7 @@ fn should_panic_if_index_out_of_range_on_wall_carving() {
 #[test]
 #[should_panic]
 fn should_panic_if_index_out_of_range_on_neighbours() {
-    let mut maze = SquareMaze::new(10, 10);
+    let maze = SquareMaze::new(10, 10);
     maze.neighbours(10, 10);
 }
 
@@ -85,7 +85,7 @@ fn should_get_neighbours() {
 #[test]
 #[should_panic]
 fn should_panic_if_index_out_of_range_for_visited() {
-    let mut maze = SquareMaze::new(5, 7);
+    let maze = SquareMaze::new(5, 7);
     maze.visited(5, 7);
 }
 
@@ -122,14 +122,14 @@ fn should_maintain_visited_state() {
 #[test]
 #[should_panic]
 fn should_panic_if_index_out_of_range_for_neighbours_unvisited() {
-    let mut maze = SquareMaze::new(5, 5);
+    let maze = SquareMaze::new(5, 5);
     maze.visited_neighbour(5, 5, WallDirection::NORTH);
 }
 
 #[test]
 #[should_panic]
 fn should_panic_if_neighbour_out_of_range_for_neighbours_unvisited() {
-    let mut maze = SquareMaze::new(5, 5);
+    let maze = SquareMaze::new(5, 5);
     maze.visited_neighbour(4, 4, WallDirection::NORTH);
 }
 
