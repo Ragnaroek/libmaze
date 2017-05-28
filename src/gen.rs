@@ -22,8 +22,10 @@ pub fn recursive(maze: &mut SquareMaze, seed: [u32; 4]) {
         let walk = rnd.choose(&unvisited_neighbours);
 
         maze.mark_visited(x, y);
+
         match walk {
             Some(d) => {
+                maze.carve(**d, x, y);
                 x = dir_ix_x(x, **d);
                 y = dir_ix_y(y, **d);
 

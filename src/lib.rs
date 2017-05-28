@@ -3,3 +3,4 @@
 
 pub mod square_maze;
 pub mod gen;
+pub mod out;
