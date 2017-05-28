@@ -29,7 +29,7 @@ fn unset_wall_bit(walls: &mut Vec<u8>, i: usize) {
     walls[byte_ix] = byte & !(1 << bit_ix)
 }
 
-fn dir_ix_x(x: usize, n: WallDirection) -> usize {
+pub fn dir_ix_x(x: usize, n: WallDirection) -> usize {
     match n {
         WallDirection::WEST => x - 1,
         WallDirection::EAST => x + 1,
@@ -37,7 +37,7 @@ fn dir_ix_x(x: usize, n: WallDirection) -> usize {
     }
 }
 
-fn dir_ix_y(y: usize, n: WallDirection) -> usize {
+pub fn dir_ix_y(y: usize, n: WallDirection) -> usize {
     match n {
         WallDirection::NORTH => y + 1,
         WallDirection::SOUTH => y - 1,
@@ -107,7 +107,7 @@ impl SquareMaze {
     //
     //
     // x=0        00000000000000 x=width-1
-    pub fn neighbours(&self, x: usize, y: usize) -> &[WallDirection] {
+    pub fn neighbours(&self, x: usize, y: usize) -> & 'static [WallDirection] {
         self.check_bounds(x, y);
 
         if x == 0 {

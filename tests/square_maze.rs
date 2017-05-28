@@ -142,4 +142,21 @@ fn should_get_visited_state_of_neighbour() {
 
     maze.mark_visited(1, 0);
     assert!(maze.visited_neighbour(0, 0, WallDirection::EAST));
+
+    assert!(!maze.visited_neighbour(5, 4, WallDirection::NORTH));
+    assert!(!maze.visited_neighbour(5, 4, WallDirection::EAST));
+    assert!(!maze.visited_neighbour(5, 4, WallDirection::SOUTH));
+    assert!(!maze.visited_neighbour(5, 4, WallDirection::WEST));
+
+    maze.mark_visited(5, 5);
+    assert!(maze.visited_neighbour(5, 4, WallDirection::NORTH));
+
+    maze.mark_visited(5, 3);
+    assert!(maze.visited_neighbour(5, 4, WallDirection::SOUTH));
+
+    maze.mark_visited(4, 4);
+    assert!(maze.visited_neighbour(5, 4, WallDirection::WEST));
+
+    maze.mark_visited(6, 4);
+    assert!(maze.visited_neighbour(5, 4, WallDirection::EAST));
 }
