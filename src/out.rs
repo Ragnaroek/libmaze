@@ -10,10 +10,15 @@ pub fn tikz(out_file: &str, maze: &SquareMaze) {
 
     write!(file, "\\documentclass{{minimal}}\n").unwrap();
     write!(file, "\\usepackage{{tikz}}\n").unwrap();
+
+    write!(file, "\\addtolength{{\\oddsidemargin}}{{-2.2cm}}\n").unwrap();
+    write!(file, "\\addtolength{{\\evensidemargin}}{{-2.2cm}}\n").unwrap();
+    write!(file, "\\addtolength{{\\topmargin}}{{-1.7cm}}\n").unwrap();
+
     write!(file, "\\begin{{document}}\n").unwrap();
     write!(file, "\\pagestyle{{empty}}\n").unwrap();
     write!(file, "\n").unwrap();
-    write!(file, "\\begin{{tikzpicture}}\n").unwrap();
+    write!(file, "\\begin{{tikzpicture}}[scale=0.3]\n").unwrap();
 
     for x in 0..maze.width {
         for y in 0..maze.height {
