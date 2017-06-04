@@ -2,7 +2,11 @@ use super::square_maze::{SquareMaze, WallDirection};
 use std::fs::OpenOptions;
 use std::io::Write;
 
-pub fn tikz(out_file: &str, maze: &SquareMaze) {
+pub struct MetaData {
+    pub seed: String
+}
+
+pub fn tikz(out_file: &str, maze: &SquareMaze, meta: &MetaData) {
     let mut file = OpenOptions::new()
                 .write(true)
                 .create(true)
@@ -49,9 +53,13 @@ pub fn tikz(out_file: &str, maze: &SquareMaze) {
         }
     }
     write!(file, "\\end{{tikzpicture}}\n").unwrap();
-    write!(file, "\\caption{{TODO}}\n").unwrap();
+    file.write(caption(meta).as_bytes()).unwrap();
     write!(file, "\\end{{figure}}\n").unwrap();
     write!(file, "\\end{{document}}\n").unwrap();
+}
+
+fn caption(meta: &MetaData) -> String {
+    return format!("\\caption{{Seed: {}}}\n", meta.seed);
 }
 
 fn line(x_from: usize, y_from: usize, x_to: usize, y_to: usize) -> String {
