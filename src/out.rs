@@ -6,12 +6,15 @@ pub fn tikz(out_file: &str, maze: &SquareMaze) {
     let mut file = OpenOptions::new()
                 .write(true)
                 .create(true)
+                .truncate(true)
                 .open(out_file).unwrap();
 
-    write!(file, "\\documentclass{{minimal}}\n").unwrap();
+    write!(file, "\\documentclass{{article}}\n").unwrap();
     write!(file, "\\usepackage{{tikz}}\n").unwrap();
+    write!(file, "\\usepackage{{caption}}\n").unwrap();
 
-    write!(file, "\\usepackage[paperwidth=7.5in, paperheight=9.25in]{{geometry}}").unwrap();
+    //write!(file, "\\usepackage[paperwidth=7.5in, paperheight=9.25in]{{geometry}}").unwrap();
+    write!(file, "\\usepackage[a4paper]{{geometry}}\n").unwrap();
     write!(file, "\\addtolength{{\\oddsidemargin}}{{-2.2cm}}\n").unwrap();
     write!(file, "\\addtolength{{\\evensidemargin}}{{-2.2cm}}\n").unwrap();
     write!(file, "\\addtolength{{\\topmargin}}{{-1.7cm}}\n").unwrap();
@@ -19,6 +22,9 @@ pub fn tikz(out_file: &str, maze: &SquareMaze) {
     write!(file, "\\begin{{document}}\n").unwrap();
     write!(file, "\\pagestyle{{empty}}\n").unwrap();
     write!(file, "\n").unwrap();
+    write!(file, "\\begin{{figure}}[!h]\n").unwrap();
+    write!(file, "\\captionsetup{{justification=raggedright, singlelinecheck=false, labelformat=empty}}\n").unwrap();
+    write!(file, "\\centering").unwrap();
     write!(file, "\\begin{{tikzpicture}}[scale=0.85]\n").unwrap();
 
     for x in 0..maze.width {
@@ -42,8 +48,9 @@ pub fn tikz(out_file: &str, maze: &SquareMaze) {
             }
         }
     }
-
     write!(file, "\\end{{tikzpicture}}\n").unwrap();
+    write!(file, "\\caption{{TODO}}\n").unwrap();
+    write!(file, "\\end{{figure}}\n").unwrap();
     write!(file, "\\end{{document}}\n").unwrap();
 }
 
