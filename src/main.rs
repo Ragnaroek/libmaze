@@ -21,11 +21,22 @@ use maze::maze::{to_hex_string, MetaData};
 //scale: 0.45
 
 fn main() {
-    let mut maze = SquareMaze::new(19, 25);
-    let seed = [1, 1, 1, 1];
-    let mut meta = MetaData::new_empty();
-    meta.seed = to_hex_string(seed).to_string();
-    gen::recursive(&mut maze, seed);
-    stat::all(&mut maze, &mut meta);
-    out::tikz("/Users/mb/_libmazetest/test.tex", &maze, &meta);
+    let mut max_meta = MetaData::new_empty();
+    let mut max_maze = SquareMaze::new(0, 0);
+
+    for i in 1..10001 {
+        let mut maze = SquareMaze::new(19, 25);
+        let seed = [i, 1, 1, 1];
+        let mut meta = MetaData::new_empty();
+        meta.seed = to_hex_string(seed).to_string();
+        gen::recursive(&mut maze, seed);
+        stat::all(&mut maze, &mut meta);
+
+        if meta.dead_ends > max_meta.dead_ends {
+            max_meta = meta;
+            max_maze = maze;
+        }
+    }
+
+    out::tikz("/Users/mb/_libmazetest/test.tex", &max_maze, &max_meta);
 }
