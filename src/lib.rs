@@ -4,5 +4,4 @@
 pub mod square_maze;
 pub mod gen;
 pub mod out;
-pub mod maze;
-pub mod stat;
+pub mod meta;

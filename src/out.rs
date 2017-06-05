@@ -1,5 +1,5 @@
 use super::square_maze::{SquareMaze, WallDirection};
-use super::maze::{MetaData};
+use super::meta::{MetaData};
 use std::fs::OpenOptions;
 use std::io::Write;
 
@@ -60,5 +60,5 @@ fn caption(meta: &MetaData) -> String {
 }
 
 fn line(x_from: usize, y_from: usize, x_to: usize, y_to: usize) -> String {
-    return format!("\\draw ({},{}) -- ({},{});\n", x_from, y_from, x_to, y_to);
+    return format!("\\draw[thick] ({},{}) -- ({},{});\n", x_from, y_from, x_to, y_to);
 }

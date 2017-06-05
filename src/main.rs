@@ -3,8 +3,7 @@ extern crate maze;
 use maze::square_maze::SquareMaze;
 use maze::gen;
 use maze::out;
-use maze::stat;
-use maze::maze::{to_hex_string, MetaData};
+use maze::meta::{to_hex_string, MetaData, all_stats};
 
 //A4 highest level: 63x93
 
@@ -30,7 +29,7 @@ fn main() {
         let mut meta = MetaData::new_empty();
         meta.seed = to_hex_string(seed).to_string();
         gen::recursive(&mut maze, seed);
-        stat::all(&mut maze, &mut meta);
+        all_stats(&mut maze, &mut meta);
 
         if meta.dead_ends > max_meta.dead_ends {
             max_meta = meta;

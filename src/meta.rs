@@ -1,6 +1,20 @@
 // Calculates statistics about mazes
 use super::square_maze::{SquareMaze, WallDirection};
-use super::maze::{MetaData};
+
+pub fn to_hex_string(seed: [u32; 4]) -> String {
+    return format!("{:08X}-{:08X}-{:08X}-{:08X}", seed[0], seed[1], seed[2], seed[3]);
+}
+
+pub struct MetaData {
+    pub seed: String,
+    pub dead_ends: u32
+}
+
+impl MetaData {
+    pub fn new_empty() -> MetaData {
+        return MetaData{seed: "".to_string(), dead_ends: 0};
+    }
+}
 
 pub fn dead_ends(maze: &SquareMaze, meta: &mut MetaData) {
     for x in 0..maze.width {
@@ -29,6 +43,6 @@ pub fn is_dead_end(x: usize, y: usize, maze: &SquareMaze) -> bool {
     return num_walls == 3;
 }
 
-pub fn all(maze: &SquareMaze, meta: &mut MetaData) {
+pub fn all_stats(maze: &SquareMaze, meta: &mut MetaData) {
     dead_ends(maze, meta);
 }
