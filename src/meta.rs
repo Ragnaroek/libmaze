@@ -16,6 +16,35 @@ impl MetaData {
     }
 }
 
+pub struct Distance {
+    pub width: usize,
+    pub height: usize,
+    pub dist: Vec<Vec<u32>>
+}
+
+impl Distance {
+    pub fn new_empty(width: usize, height: usize) -> Distance {
+        let mut dist = Vec::with_capacity(width);
+        for x in 0..width {
+            let mut h_vec = Vec::with_capacity(height);
+            for y in 0..height {
+                h_vec.insert(y, 0);
+            }
+            dist.insert(x, h_vec);
+        }
+
+        return Distance{width: width, height: height, dist: dist}
+    }
+
+    pub fn distance(&self, x: usize, y: usize) -> u32 {
+        return self.dist[x][y];
+    }
+
+    pub fn set(&mut self, x: usize, y: usize, dist: u32) {
+        self.dist[x][y] = dist;
+    }
+}
+
 pub fn dead_ends(maze: &SquareMaze, meta: &mut MetaData) {
     for x in 0..maze.width {
         for y in 0..maze.height {

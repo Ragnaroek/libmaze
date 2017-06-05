@@ -10,7 +10,7 @@ pub enum WallDirection {
 pub struct SquareMaze {
     horizontal_walls: Vec<u8>,
     vertical_walls: Vec<u8>,
-    visited: Vec<u8>,
+    visited: Vec<u8>, //TODO move visited state out to own struct!
     pub width: usize,
     pub height: usize
 }
