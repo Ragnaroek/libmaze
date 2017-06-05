@@ -10,7 +10,6 @@ pub enum WallDirection {
 pub struct SquareMaze {
     horizontal_walls: Vec<u8>,
     vertical_walls: Vec<u8>,
-    visited: Vec<u8>, //TODO move visited state out to own struct!
     pub width: usize,
     pub height: usize
 }
@@ -73,12 +72,7 @@ impl SquareMaze {
             v_walls.insert(i, 255);
         }
 
-        let visited_size = ((width*height)/8)+1;
-        let mut visited = Vec::with_capacity(visited_size);
-        for i in 0..visited_size {
-            visited.insert(i, 0);
-        }
-        return SquareMaze{horizontal_walls: h_walls, vertical_walls: v_walls, visited, width, height};
+        return SquareMaze{horizontal_walls: h_walls, vertical_walls: v_walls, width, height};
     }
 
     pub fn wall(&self, dir: WallDirection, x: usize, y: usize) -> bool {
@@ -134,29 +128,6 @@ impl SquareMaze {
             return &S_NBS
         }
         return &ALL_NBS;
-    }
-
-    pub fn visited(&self, x: usize, y: usize) -> bool {
-        self.check_bounds(x, y);
-
-        let bit_index = y * self.width + x;
-        let byte_index = bit_index/8;
-        let byte = self.visited[byte_index];
-        let mask = 1 << (bit_index % 8);
-
-        return (byte & mask) != 0;
-    }
-    pub fn visited_neighbour(&self, x: usize, y: usize, n: WallDirection) -> bool {
-        return self.visited(dir_ix_x(x, n), dir_ix_y(y, n));
-    }
-
-    pub fn mark_visited(&mut self, x: usize, y: usize) {
-        let bit_index = y * self.width + x;
-        let byte_index = bit_index/8;
-        let byte = self.visited[byte_index];
-        let mask = 1 << (bit_index % 8);
-
-        self.visited[byte_index] = byte | mask;
     }
 
     fn check_bounds(&self, x: usize, y: usize) -> () {
