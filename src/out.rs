@@ -1,10 +1,7 @@
 use super::square_maze::{SquareMaze, WallDirection};
+use super::maze::{MetaData};
 use std::fs::OpenOptions;
 use std::io::Write;
-
-pub struct MetaData {
-    pub seed: String
-}
 
 pub fn tikz(out_file: &str, maze: &SquareMaze, meta: &MetaData) {
     let mut file = OpenOptions::new()
@@ -59,7 +56,7 @@ pub fn tikz(out_file: &str, maze: &SquareMaze, meta: &MetaData) {
 }
 
 fn caption(meta: &MetaData) -> String {
-    return format!("\\caption{{Seed: {}}}\n", meta.seed);
+    return format!("\\caption{{Seed: {}\\\\Dead Ends: {}}}\n", meta.seed, meta.dead_ends);
 }
 
 fn line(x_from: usize, y_from: usize, x_to: usize, y_to: usize) -> String {
