@@ -23,7 +23,7 @@ fn main() {
     let mut max_meta = MetaData::new_empty();
     let mut max_maze = SquareMaze::new(0, 0);
 
-    for i in 1..10001 {
+    for i in 1..2 {
         let mut maze = SquareMaze::new(19, 25);
         let seed = [i, 1, 1, 1];
         let mut meta = MetaData::new_empty();

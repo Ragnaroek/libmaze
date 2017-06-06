@@ -47,6 +47,9 @@ pub fn tikz(out_file: &str, maze: &SquareMaze, meta: &MetaData) {
             if y == maze.height-1 && maze.wall(WallDirection::NORTH, x, y) {
                 file.write(line(x,y+1, x+1,y+1).as_bytes()).unwrap();
             }
+
+            //distance
+            file.write(distance(x,y,meta.distance.distance(x,y)).as_bytes()).unwrap();
         }
     }
     write!(file, "\\end{{tikzpicture}}\n").unwrap();
@@ -61,4 +64,10 @@ fn caption(meta: &MetaData) -> String {
 
 fn line(x_from: usize, y_from: usize, x_to: usize, y_to: usize) -> String {
     return format!("\\draw[thick] ({},{}) -- ({},{});\n", x_from, y_from, x_to, y_to);
+}
+
+fn distance(x: usize, y: usize, dist: u32) -> String {
+    let x_c = (x as f64) + 0.5;
+    let y_c = (y as f64) + 0.5;
+    return format!("\\node[text=red] at ({},{}) {{{}}};\n", x_c, y_c, dist);
 }
