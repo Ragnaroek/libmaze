@@ -7,12 +7,8 @@ pub enum WallDirection {
     WEST
 }
 
-pub struct SquareMaze {
-    horizontal_walls: Vec<u8>,
-    vertical_walls: Vec<u8>,
-    pub width: usize,
-    pub height: usize
-}
+
+
 
 fn wall_bit_set(walls: &Vec<u8>, i: usize) -> bool {
     let byte_ix = i/8;
@@ -56,6 +52,26 @@ static W_NBS  : [WallDirection; 3] = [WallDirection::NORTH, WallDirection::EAST,
 static ALL_NBS : [WallDirection; 4] = [WallDirection::NORTH, WallDirection::EAST,
                                        WallDirection::SOUTH, WallDirection::WEST];
 
+pub struct MazeCell {
+   pub x: usize,
+   pub y: usize
+}
+
+impl MazeCell {
+    pub fn new(x: usize, y: usize) -> MazeCell {
+        return MazeCell{x,y};
+    }
+}
+
+pub struct SquareMaze {
+   horizontal_walls: Vec<u8>,
+   vertical_walls: Vec<u8>,
+   pub width: usize,
+   pub height: usize,
+   pub entry: MazeCell,
+   pub exit: MazeCell
+}
+
 impl SquareMaze {
     pub fn new(width: usize, height: usize) -> SquareMaze {
 
@@ -72,7 +88,15 @@ impl SquareMaze {
             v_walls.insert(i, 255);
         }
 
-        return SquareMaze{horizontal_walls: h_walls, vertical_walls: v_walls, width, height};
+        let entry = MazeCell::new(0, 0);
+        let exit = MazeCell::new(0, 0);
+
+        return SquareMaze{horizontal_walls: h_walls,
+                          vertical_walls: v_walls,
+                          width,
+                          height,
+                          entry,
+                          exit};
     }
 
     pub fn wall(&self, dir: WallDirection, x: usize, y: usize) -> bool {

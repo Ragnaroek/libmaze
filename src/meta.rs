@@ -1,5 +1,5 @@
 // Calculates statistics about mazes
-use super::square_maze::{SquareMaze, WallDirection};
+use super::square_maze::{SquareMaze, WallDirection, MazeCell};
 
 pub fn to_hex_string(seed: [u32; 4]) -> String {
     return format!("{:08X}-{:08X}-{:08X}-{:08X}", seed[0], seed[1], seed[2], seed[3]);
@@ -49,7 +49,7 @@ impl Distance {
 ///
 /// Calculates the distance-matrix from a given start position
 /// in the maze with the Dijkstra-Algorithm.
-pub fn distances(maze: &SquareMaze, x: usize, y: usize) -> Distance {
+pub fn distances(maze: &SquareMaze, start: &MazeCell) -> Distance {
     //TODO Actually implement algorithm :)
     return Distance::new_empty(maze.width, maze.height);
 }
@@ -83,6 +83,5 @@ pub fn is_dead_end(x: usize, y: usize, maze: &SquareMaze) -> bool {
 
 pub fn all_stats(maze: &SquareMaze, meta: &mut MetaData) {
     dead_ends(maze, meta);
-    // TODO use correct start position!
-    meta.distance = distances(maze, 0, 0);
+    meta.distance = distances(maze, &maze.entry);
 }
