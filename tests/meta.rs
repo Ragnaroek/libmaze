@@ -39,7 +39,7 @@ fn should_be_dead_end_only_if_cell_has_three_walls() {
 
 #[test]
 fn should_init_distance_struct_with_all_zeros() {
-    let dist = Distance::new_empty(10, 10);
+    let dist = Distance::new(10, 10);
     for x in 0..10 {
         for y in 0..10 {
             assert_eq!(dist.distance(x, y), 0);
@@ -49,7 +49,7 @@ fn should_init_distance_struct_with_all_zeros() {
 
 #[test]
 fn should_set_distance() {
-    let mut dist = Distance::new_empty(10, 10);
+    let mut dist = Distance::new(10, 10);
     assert_eq!(dist.distance(0,0), 0);
     dist.set(0,0, 666);
     assert_eq!(dist.distance(0,0), 666);

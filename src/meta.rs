@@ -1,5 +1,8 @@
 // Calculates statistics about mazes
-use super::square_maze::{SquareMaze, WallDirection, MazeCell};
+use super::square_maze::{SquareMaze, WallDirection, MazeCell, dir_ix_x, dir_ix_y};
+use super::visited::{Visited};
+
+use std::collections::HashSet;
 
 pub fn to_hex_string(seed: [u32; 4]) -> String {
     return format!("{:08X}-{:08X}-{:08X}-{:08X}", seed[0], seed[1], seed[2], seed[3]);
@@ -13,7 +16,7 @@ pub struct MetaData {
 
 impl MetaData {
     pub fn new_empty() -> MetaData {
-        return MetaData{seed: "".to_string(), dead_ends: 0, distance: Distance::new_empty(0,0)};
+        return MetaData{seed: "".to_string(), dead_ends: 0, distance: Distance::new(0,0)};
     }
 }
 
@@ -24,7 +27,7 @@ pub struct Distance {
 }
 
 impl Distance {
-    pub fn new_empty(width: usize, height: usize) -> Distance {
+    pub fn new(width: usize, height: usize) -> Distance {
         let mut dist = Vec::with_capacity(width);
         for x in 0..width {
             let mut h_vec = Vec::with_capacity(height);
@@ -50,8 +53,32 @@ impl Distance {
 /// Calculates the distance-matrix from a given start position
 /// in the maze with the Dijkstra-Algorithm.
 pub fn distances(maze: &SquareMaze, start: &MazeCell) -> Distance {
-    //TODO Actually implement algorithm :)
-    return Distance::new_empty(maze.width, maze.height);
+
+    let mut distances = Distance::new(maze.width, maze.height);
+    let mut visited = Visited::new(maze.width, maze.height);
+    let mut frontier : HashSet<MazeCell> = HashSet::new();
+    frontier.insert(MazeCell::new(start.x, start.y));
+    let mut dist = 0;
+
+    while !frontier.is_empty() {
+        let mut next_frontier : HashSet<MazeCell> = HashSet::new();
+
+        for cell in frontier {
+            distances.set(cell.x, cell.y, dist);
+            visited.mark_visited(cell.x, cell.y);
+            for neighbour in maze.neighbours(cell.x, cell.y) {
+                let n_cell = MazeCell::new(dir_ix_x(cell.x, *neighbour), dir_ix_y(cell.y, *neighbour));
+                if !maze.wall(*neighbour, cell.x, cell.y) && !visited.visited(n_cell.x, n_cell.y) {
+                    next_frontier.insert(n_cell);
+                }
+            }
+        }
+
+        dist = dist + 1;
+        frontier = next_frontier;
+    }
+
+    return distances;
 }
 
 pub fn dead_ends(maze: &SquareMaze, meta: &mut MetaData) {

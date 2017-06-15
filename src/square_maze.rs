@@ -7,9 +7,6 @@ pub enum WallDirection {
     WEST
 }
 
-
-
-
 fn wall_bit_set(walls: &Vec<u8>, i: usize) -> bool {
     let byte_ix = i/8;
     let bit_ix = i%8;
@@ -52,6 +49,7 @@ static W_NBS  : [WallDirection; 3] = [WallDirection::NORTH, WallDirection::EAST,
 static ALL_NBS : [WallDirection; 4] = [WallDirection::NORTH, WallDirection::EAST,
                                        WallDirection::SOUTH, WallDirection::WEST];
 
+#[derive(PartialEq, Eq, Hash, Debug)]
 pub struct MazeCell {
    pub x: usize,
    pub y: usize
