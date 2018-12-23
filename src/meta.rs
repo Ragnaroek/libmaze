@@ -4,8 +4,9 @@ use super::visited::{Visited};
 
 use std::collections::HashSet;
 
-pub fn to_hex_string(seed: [u32; 4]) -> String {
-    return format!("{:08X}-{:08X}-{:08X}-{:08X}", seed[0], seed[1], seed[2], seed[3]);
+pub fn to_hex_string(seed: [u8; 16]) -> String {
+    return format!("{:02X}{:02X}{:02X}{:02X}-{:02X}{:02X}{:02X}{:02X}-{:02X}{:02X}{:02X}{:02X}-{:02X}{:02X}{:02X}{:02X}",
+    seed[0], seed[1], seed[2], seed[3], seed[4], seed[5], seed[6], seed[7], seed[8], seed[9], seed[10], seed[11],seed[12], seed[13], seed[14], seed[15]);
 }
 
 pub struct MetaData {

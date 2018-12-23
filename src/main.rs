@@ -25,7 +25,7 @@ fn main() {
 
     for i in 1..2 {
         let mut maze = SquareMaze::new(19, 25);
-        let seed = [i, 1, 1, 1];
+        let seed = [i as u8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
         let mut meta = MetaData::new_empty();
         meta.seed = to_hex_string(seed).to_string();
         gen::recursive(&mut maze, seed);

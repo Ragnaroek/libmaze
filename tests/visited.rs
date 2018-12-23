@@ -1,7 +1,7 @@
 extern crate maze;
 
 use maze::visited::{Visited};
-use maze::square_maze::{SquareMaze, WallDirection};
+use maze::square_maze::{WallDirection};
 
 #[test]
 #[should_panic]

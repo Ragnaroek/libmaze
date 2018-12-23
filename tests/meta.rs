@@ -5,14 +5,14 @@ use maze::meta::{is_dead_end, to_hex_string, Distance};
 
 #[test]
 fn should_convert_all_zero_array_to_hex() {
-    let result = to_hex_string([0,0,0,0]);
+    let result = to_hex_string([0; 16]);
     assert_eq!(result, "00000000-00000000-00000000-00000000");
 }
 
 #[test]
 fn should_convert_max_u32_to_all_f_hex() {
-    let max_u32 = u32::max_value();
-    let result = to_hex_string([max_u32,max_u32,max_u32,max_u32]);
+    let max_u8 = u8::max_value();
+    let result = to_hex_string([max_u8; 16]);
     assert_eq!(result, "FFFFFFFF-FFFFFFFF-FFFFFFFF-FFFFFFFF");
 }
 
