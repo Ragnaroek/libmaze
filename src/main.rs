@@ -1,9 +1,12 @@
 extern crate maze;
 
+use std::path::Path;
+use std::io;
+
 use maze::square_maze::SquareMaze;
 use maze::gen;
-use maze::out;
 use maze::meta::{to_hex_string, MetaData, all_stats};
+use maze::plm;
 
 //A4 highest level: 63x93
 
@@ -19,7 +22,7 @@ use maze::meta::{to_hex_string, MetaData, all_stats};
 //36x47
 //scale: 0.45
 
-fn main() {
+fn main() -> io::Result<()> {
     let mut max_meta = MetaData::new_empty();
     let mut max_maze = SquareMaze::new(0, 0);
 
@@ -37,5 +40,6 @@ fn main() {
         }
     }
 
-    out::tikz("/Users/mb/_libmazetest/test.tex", &max_maze, &max_meta);
+    plm::output(Path::new("/Users/mb/_libmazetest/test.plm"), &max_maze)?;
+    Ok(())
 }
