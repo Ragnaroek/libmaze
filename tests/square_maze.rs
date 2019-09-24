@@ -5,7 +5,7 @@ use maze::square_maze::{SquareMaze, WallDirection};
 #[test]
 fn should_have_all_cells_walled_after_init() {
 
-    let maze = SquareMaze::new(10, 10);
+    let maze = SquareMaze::new_filled(10, 10);
 
     for x in 0..10 {
         for y in 0..10 {
@@ -20,13 +20,13 @@ fn should_have_all_cells_walled_after_init() {
 #[test]
 #[should_panic]
 fn should_panic_if_index_out_of_range_on_wall_access() {
-    let maze = SquareMaze::new(10, 10);
+    let maze = SquareMaze::new_filled(10, 10);
     maze.wall(WallDirection::NORTH, 10, 10);
 }
 
 #[test]
 fn should_carve_some_walls() {
-    let mut maze = SquareMaze::new(10, 10);
+    let mut maze = SquareMaze::new_filled(10, 10);
 
     maze.carve(WallDirection::NORTH, 0, 0);
     assert!(!maze.wall(WallDirection::NORTH, 0, 0));
@@ -56,20 +56,20 @@ fn should_carve_some_walls() {
 #[test]
 #[should_panic]
 fn should_panic_if_index_out_of_range_on_wall_carving() {
-    let mut maze = SquareMaze::new(10, 10);
+    let mut maze = SquareMaze::new_filled(10, 10);
     maze.carve(WallDirection::NORTH, 10, 10);
 }
 
 #[test]
 #[should_panic]
 fn should_panic_if_index_out_of_range_on_neighbours() {
-    let maze = SquareMaze::new(10, 10);
+    let maze = SquareMaze::new_filled(10, 10);
     maze.neighbours(10, 10);
 }
 
 #[test]
 fn should_get_neighbours() {
-    let maze = SquareMaze::new(10, 10);
+    let maze = SquareMaze::new_filled(10, 10);
     assert_eq!(maze.neighbours(0,0), [WallDirection::NORTH, WallDirection::EAST]);
     assert_eq!(maze.neighbours(0,1), [WallDirection::NORTH, WallDirection::EAST, WallDirection::SOUTH]);
     assert_eq!(maze.neighbours(0,9), [WallDirection::EAST, WallDirection::SOUTH]);

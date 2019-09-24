@@ -18,7 +18,7 @@ fn should_convert_max_u32_to_all_f_hex() {
 
 #[test]
 fn should_be_dead_end_only_if_cell_has_three_walls() {
-    let mut maze = SquareMaze::new(10, 10);
+    let mut maze = SquareMaze::new_filled(10, 10);
 
     assert!(!is_dead_end(0, 0, &maze));
     maze.carve(WallDirection::NORTH, 0, 0);

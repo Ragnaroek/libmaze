@@ -24,10 +24,10 @@ use maze::plm;
 
 fn main() -> io::Result<()> {
     let mut max_meta = MetaData::new_empty();
-    let mut max_maze = SquareMaze::new(0, 0);
+    let mut max_maze = SquareMaze::new_filled(0, 0);
 
     for i in 1..2 {
-        let mut maze = SquareMaze::new(19, 25);
+        let mut maze = SquareMaze::new_filled(19, 25);
         let seed = [i as u8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
         let mut meta = MetaData::new_empty();
         meta.seed = to_hex_string(seed).to_string();

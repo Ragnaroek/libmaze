@@ -61,6 +61,7 @@ impl MazeCell {
     }
 }
 
+#[derive(PartialEq, Debug)]
 pub struct SquareMaze {
    horizontal_walls: Vec<u8>,
    vertical_walls: Vec<u8>,
@@ -71,8 +72,11 @@ pub struct SquareMaze {
 }
 
 impl SquareMaze {
-    pub fn new(width: usize, height: usize) -> SquareMaze {
+    pub fn new(width: usize, height: usize, entry: MazeCell, exit: MazeCell, horizontal_walls: Vec<u8>, vertical_walls: Vec<u8>) -> SquareMaze {
+        SquareMaze{horizontal_walls, vertical_walls, width, height, entry, exit}
+    }
 
+    pub fn new_filled_with_entry_exit(width: usize, height: usize, entry: MazeCell, exit: MazeCell) -> SquareMaze {
         let h_size = (((width+1)*height)/8)+1;
         let v_size = (((height+1)*width)/8)+1;
 
@@ -86,15 +90,18 @@ impl SquareMaze {
             v_walls.insert(i, 255);
         }
 
+        SquareMaze{horizontal_walls: h_walls,
+                   vertical_walls: v_walls,
+                   width,
+                   height,
+                   entry,
+                   exit}
+    }
+
+    pub fn new_filled(width: usize, height: usize) -> SquareMaze {
         let entry = MazeCell::new(0, 0);
         let exit = MazeCell::new(0, 0);
-
-        return SquareMaze{horizontal_walls: h_walls,
-                          vertical_walls: v_walls,
-                          width,
-                          height,
-                          entry,
-                          exit};
+        SquareMaze::new_filled_with_entry_exit(width, height, entry, exit)
     }
 
     pub fn wall(&self, dir: WallDirection, x: usize, y: usize) -> bool {
