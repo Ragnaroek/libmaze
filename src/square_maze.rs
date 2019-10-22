@@ -61,6 +61,15 @@ impl MazeCell {
     }
 }
 
+//2x2 maze
+
+//    0h   1h
+//0v|---|1v---|3v    (0,0) NORTH y*w + x = 0
+//  |2h |3h   |      (0,0) SOUTH == (0,1) NORTH = 1*2 + 0 = 2
+//  |---|-----|      (0,0) WEST =
+//  |4h |5h   |      (0,0) EAST = (0,1) WEST
+//  |---|-----|
+
 #[derive(PartialEq, Debug)]
 pub struct SquareMaze {
    horizontal_walls: Vec<u8>,
@@ -107,11 +116,18 @@ impl SquareMaze {
     pub fn wall(&self, dir: WallDirection, x: usize, y: usize) -> bool {
         self.check_bounds(x, y);
 
+
+        //0v|---|1v---|3v    (0,0) NORTH y*w + x = 0
+        //  |2h |3h   |      (0,0) SOUTH == (0,1) NORTH = 1*2 + 0 = 2
+        //  |---|-----|      (0,0) WEST = y*w + x
+        //  |4h |5h   |      (0,0) EAST = (1,0) WEST
+        //0,0 SOUTH == 0,1 NORTH ?
+        //0+0*h = 0 == 2+0*h = 2
         match dir {
-            WallDirection::WEST  => wall_bit_set(&self.horizontal_walls, x+y*self.width),
-            WallDirection::EAST  => wall_bit_set(&self.horizontal_walls, (x+1)+y*self.width),
-            WallDirection::SOUTH => wall_bit_set(&self.vertical_walls, y+x*self.height),
-            WallDirection::NORTH => wall_bit_set(&self.vertical_walls, (y+1)+x*self.height)
+            WallDirection::WEST  => wall_bit_set(&self.vertical_walls, x+y*self.width),
+            WallDirection::EAST  => self.wall(WallDirection::WEST, x+1, y),
+            WallDirection::SOUTH => self.wall(WallDirection::NORTH, x, y+1),
+            WallDirection::NORTH => wall_bit_set(&self.horizontal_walls, x+y*self.width)
         }
     }
 
@@ -119,10 +135,10 @@ impl SquareMaze {
         self.check_bounds(x, y);
 
         match dir {
-            WallDirection::WEST  => unset_wall_bit(&mut self.horizontal_walls, x+y*self.width),
-            WallDirection::EAST  => unset_wall_bit(&mut self.horizontal_walls, (x+1)+y*self.width),
-            WallDirection::SOUTH => unset_wall_bit(&mut self.vertical_walls, y+x*self.height),
-            WallDirection::NORTH => unset_wall_bit(&mut self.vertical_walls, (y+1)+x*self.height)
+            WallDirection::WEST  => unset_wall_bit(&mut self.vertical_walls, x+y*self.width),
+            WallDirection::EAST  => self.carve(WallDirection::WEST, x+1, y),
+            WallDirection::SOUTH => self.carve(WallDirection::NORTH, x, y+1),
+            WallDirection::NORTH => unset_wall_bit(&mut self.horizontal_walls, x+y*self.width)
         }
     }
 
@@ -160,10 +176,10 @@ impl SquareMaze {
     }
 
     fn check_bounds(&self, x: usize, y: usize) -> () {
-        if x >= self.width {
+        if x >= self.width+1 {
             panic!("Out of bound cell access {} >= width {}", x, self.width)
         }
-        if y >= self.height {
+        if y >= self.height+1 {
             panic!("Out of bound cell access {} >= height {}", y, self.height)
         }
     }

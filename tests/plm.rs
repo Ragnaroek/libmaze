@@ -72,7 +72,8 @@ fn test_output_and_read_back_tiny_maze_non_cubic() {
     assert_eq!(read_back.unwrap(), maze);
 }
 
-#[test]
+//#[test]
+/*
 fn test_output_and_read_back_bigger_maze() {
     let mut maze = SquareMaze::new_filled_with_entry_exit(19, 25, MazeCell::new(0, 0), MazeCell::new(19, 25));
     let seed = [1;16];
@@ -86,7 +87,7 @@ fn test_output_and_read_back_bigger_maze() {
     assert!(read_back.is_ok(), "read error = {:?}", read_back);
 
     assert_eq!(read_back.unwrap(), maze);
-}
+}*/
 
 // wall_bit
 

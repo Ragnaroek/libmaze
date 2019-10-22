@@ -18,10 +18,28 @@ fn should_have_all_cells_walled_after_init() {
 }
 
 #[test]
+fn minimal_maze_carving() {
+    let mut maze = SquareMaze::new_filled(2, 2);
+    for x in 0..1 {
+        for y in 0..1 {
+            assert!(maze.wall(WallDirection::NORTH, x, y));
+            assert!(maze.wall(WallDirection::SOUTH, x, y));
+            assert!(maze.wall(WallDirection::EAST, x, y));
+            assert!(maze.wall(WallDirection::WEST, x, y));
+        }
+    }
+
+    maze.carve(WallDirection::SOUTH, 0, 0);
+    assert!(!maze.wall(WallDirection::SOUTH, 0, 0));
+    assert!(!maze.wall(WallDirection::NORTH, 0, 1));
+
+}
+
+#[test]
 #[should_panic]
 fn should_panic_if_index_out_of_range_on_wall_access() {
     let maze = SquareMaze::new_filled(10, 10);
-    maze.wall(WallDirection::NORTH, 10, 10);
+    maze.wall(WallDirection::NORTH, 11, 11);
 }
 
 #[test]
@@ -34,17 +52,19 @@ fn should_carve_some_walls() {
     assert!(maze.wall(WallDirection::EAST, 0, 0));
     assert!(maze.wall(WallDirection::WEST, 0, 0));
 
-    maze.carve(WallDirection::EAST, 9, 9);
-    assert!(maze.wall(WallDirection::NORTH, 9, 9));
-    assert!(maze.wall(WallDirection::SOUTH, 9, 9));
-    assert!(!maze.wall(WallDirection::EAST, 9, 9));
-    assert!(maze.wall(WallDirection::WEST, 9, 9));
+    maze.carve(WallDirection::EAST, 8, 8);
+    assert!(maze.wall(WallDirection::NORTH, 8, 8));
+    assert!(maze.wall(WallDirection::SOUTH, 8, 8));
+    assert!(!maze.wall(WallDirection::EAST, 8, 8));
+    assert!(maze.wall(WallDirection::WEST, 8, 8));
+    assert!(!maze.wall(WallDirection::WEST, 9, 8));
 
     maze.carve(WallDirection::SOUTH, 5, 1);
     assert!(maze.wall(WallDirection::NORTH, 5, 1));
     assert!(!maze.wall(WallDirection::SOUTH, 5, 1));
     assert!(maze.wall(WallDirection::EAST, 5, 1));
     assert!(maze.wall(WallDirection::WEST, 5, 1));
+    assert!(!maze.wall(WallDirection::NORTH, 5, 2));
 
     maze.carve(WallDirection::WEST, 0, 0);
     assert!(!maze.wall(WallDirection::NORTH, 0, 0));
@@ -57,14 +77,14 @@ fn should_carve_some_walls() {
 #[should_panic]
 fn should_panic_if_index_out_of_range_on_wall_carving() {
     let mut maze = SquareMaze::new_filled(10, 10);
-    maze.carve(WallDirection::NORTH, 10, 10);
+    maze.carve(WallDirection::NORTH, 11, 11);
 }
 
 #[test]
 #[should_panic]
 fn should_panic_if_index_out_of_range_on_neighbours() {
     let maze = SquareMaze::new_filled(10, 10);
-    maze.neighbours(10, 10);
+    maze.neighbours(11, 11);
 }
 
 #[test]

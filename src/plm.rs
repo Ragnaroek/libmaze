@@ -7,6 +7,9 @@ use std::convert::TryInto;
 
 use super::square_maze::{SquareMaze, WallDirection, MazeCell};
 
+//TODO Just serialise the internal SquareMaze bits and read them back.
+//Avoid having two complicated formats.
+
 /// plm = _p_ortable _l_abyrinth for_m_at
 pub fn output(path: &Path, maze: &SquareMaze) -> io::Result<()> {
     if path.is_dir() {
