@@ -63,8 +63,8 @@ impl MazeCell {
 
 #[derive(PartialEq, Debug)]
 pub struct SquareMaze {
-   horizontal_walls: Vec<u8>,
-   vertical_walls: Vec<u8>,
+   pub horizontal_walls: Vec<u8>,
+   pub vertical_walls: Vec<u8>,
    pub width: usize,
    pub height: usize,
    pub entry: MazeCell,
