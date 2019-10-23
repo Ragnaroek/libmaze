@@ -3,7 +3,7 @@ extern crate maze;
 use std::path::Path;
 use std::io;
 
-use maze::square_maze::SquareMaze;
+use maze::square_maze::{SquareMaze, MazeCell};
 use maze::gen;
 use maze::meta::{to_hex_string, MetaData, all_stats};
 use maze::plm;
@@ -31,7 +31,7 @@ fn main() -> io::Result<()> {
         let seed = [i as u8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
         let mut meta = MetaData::new_empty();
         meta.seed = to_hex_string(seed).to_string();
-        gen::recursive(&mut maze, seed);
+        gen::recursive(&mut maze, seed, MazeCell::new(0, 0));
         all_stats(&mut maze, &mut meta);
 
         if meta.dead_ends > max_meta.dead_ends {

@@ -75,7 +75,7 @@ fn test_output_and_read_back_tiny_maze_non_cubic() {
 fn test_output_and_read_back_bigger_maze() {
     let mut maze = SquareMaze::new_filled_with_entry_exit(19, 25, MazeCell::new(0, 0), MazeCell::new(19, 25));
     let seed = [1;16];
-    gen::recursive(&mut maze, seed);
+    gen::recursive(&mut maze, seed, MazeCell::new(0, 0));
 
     let path = Path::new("./tests/tmp/plm_test_bigger_maze.plm");
     let out_res = plm::output(&path, &maze);
