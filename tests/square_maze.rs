@@ -74,6 +74,17 @@ fn should_carve_some_walls() {
 }
 
 #[test]
+fn should_carve_edge_walls() {
+    let mut maze = SquareMaze::new_filled(10, 10);
+
+    maze.carve(WallDirection::EAST, 9, 0);
+    assert!(!maze.wall(WallDirection::EAST, 9, 0));
+
+    maze.carve(WallDirection::SOUTH, 9, 9);
+    assert!(!maze.wall(WallDirection::SOUTH, 9, 9));
+}
+
+#[test]
 #[should_panic]
 fn should_panic_if_index_out_of_range_on_wall_carving() {
     let mut maze = SquareMaze::new_filled(10, 10);
