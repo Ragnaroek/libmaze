@@ -1,9 +1,9 @@
 extern crate rand;
 extern crate rand_xorshift;
 
-use super::square_maze::{SquareMaze, WallDirection, MazeCell, dir_ix_x, dir_ix_y};
+use super::square_maze::{SquareMaze, MazeCell, dir_ix_x, dir_ix_y};
 use super::visited::{Visited};
-use self::rand::{SeedableRng, Rng};
+use self::rand::{SeedableRng};
 use self::rand::seq::{SliceRandom};
 use self::rand_xorshift::{XorShiftRng};
 
@@ -11,10 +11,8 @@ pub fn recursive(maze: &mut SquareMaze, seed: [u8; 16], start: MazeCell) {
     let mut rnd = XorShiftRng::from_seed(seed);
     let mut visit = Visited::new(maze.width, maze.height);
 
-    //start position is a random position at the top of the maze
     let mut x = start.x;
     let mut y = start.y;
-    maze.carve(WallDirection::NORTH, x, y);
 
     let mut need_to_visit = maze.width * maze.height - 1;
     visit.mark_visited(x, y);

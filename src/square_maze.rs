@@ -139,11 +139,11 @@ impl SquareMaze {
     }
 
     fn north_bit(&self, x: usize, y: usize) -> usize {
-        y * self.width + x
+        y * self.width + self.width + x
     }
 
     fn south_bit(&self, x: usize, y: usize) -> usize {
-        y * self.width + self.width + x
+        y * self.width + x
     }
 
     fn west_bit(&self, x: usize, y: usize) -> usize {

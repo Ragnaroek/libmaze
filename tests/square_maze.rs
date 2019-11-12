@@ -1,6 +1,9 @@
 extern crate maze;
 
-use maze::square_maze::{SquareMaze, WallDirection};
+use maze::square_maze::{SquareMaze, WallDirection, MazeCell};
+use maze::meta::{to_hex_string, MetaData};
+use maze::gen;
+
 
 #[test]
 fn should_have_all_cells_walled_after_init() {
@@ -29,9 +32,9 @@ fn minimal_maze_carving() {
         }
     }
 
-    maze.carve(WallDirection::SOUTH, 0, 0);
-    assert!(!maze.wall(WallDirection::SOUTH, 0, 0));
-    assert!(!maze.wall(WallDirection::NORTH, 0, 1));
+    maze.carve(WallDirection::NORTH, 0, 0);
+    assert!(!maze.wall(WallDirection::NORTH, 0, 0));
+    assert!(!maze.wall(WallDirection::SOUTH, 0, 1));
 
 }
 
@@ -64,7 +67,7 @@ fn should_carve_some_walls() {
     assert!(!maze.wall(WallDirection::SOUTH, 5, 1));
     assert!(maze.wall(WallDirection::EAST, 5, 1));
     assert!(maze.wall(WallDirection::WEST, 5, 1));
-    assert!(!maze.wall(WallDirection::NORTH, 5, 2));
+    assert!(!maze.wall(WallDirection::NORTH, 5, 0));
 
     maze.carve(WallDirection::WEST, 0, 0);
     assert!(!maze.wall(WallDirection::NORTH, 0, 0));
@@ -111,4 +114,17 @@ fn should_get_neighbours() {
     assert_eq!(maze.neighbours(5,0), [WallDirection::NORTH, WallDirection::EAST, WallDirection::WEST]);
 
     assert_eq!(maze.neighbours(5,5), [WallDirection::NORTH, WallDirection::EAST, WallDirection::SOUTH, WallDirection::WEST]);
+}
+
+#[test] //from a test generation
+fn generated_maze_edge_invariants() {
+    let width = 200;
+    let height = 50;
+    let mut maze = SquareMaze::new_filled((width-2)/3, (height-1)/2);
+    let seed = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+    let mut meta = MetaData::new_empty();
+    meta.seed = to_hex_string(seed).to_string();
+    gen::recursive(&mut maze, seed, MazeCell::new(0, 0));
+
+    assert!(maze.wall(WallDirection::SOUTH, 1, 13) == maze.wall(WallDirection::NORTH, 1, 12));
 }
