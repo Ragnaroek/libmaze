@@ -1,11 +1,8 @@
 extern crate maze;
 
-use std::path::Path;
 use maze::plm;
 use maze::square_maze::{SquareMaze, MazeCell, WallDirection};
 use maze::gen;
-use std::fs::File;
-use std::io::Read;
 
 //write
 
@@ -14,13 +11,7 @@ fn test_output_plm() {
     let mut maze = SquareMaze::new_filled_with_entry_exit(2, 2, MazeCell::new(0, 0), MazeCell::new(1, 1));
     maze.carve(WallDirection::EAST, 0, 0);
 
-    let path = Path::new("./tests/tmp/plm_write_test.plm");
-    let out_res = plm::output(&path, &maze);
-    assert!(out_res.is_ok(), "write error = {:?}", out_res);
-
-    let mut f = File::open(path).unwrap();
-    let mut data = Vec::new();
-    f.read_to_end(&mut data).unwrap();
+    let data = plm::output_to_buf(&maze);
 
     assert_eq!(11+1+1, data.len());
     assert_eq!('p' as u8, data[0]);
@@ -46,11 +37,8 @@ fn test_output_and_read_back_tiny_maze() {
     let mut maze = SquareMaze::new_filled_with_entry_exit(2, 2, MazeCell::new(0, 0), MazeCell::new(1, 1));
     maze.carve(WallDirection::EAST, 0, 0);
 
-    let path = Path::new("./tests/tmp/plm_test_tiny.plm");
-    let out_res = plm::output(&path, &maze);
-    assert!(out_res.is_ok(), "write error = {:?}", out_res);
-
-    let read_back = plm::read(&path);
+    let out_res = plm::output_to_buf(&maze);
+    let read_back = plm::read_from_buf(&out_res);
     assert!(read_back.is_ok(), "read error = {:?}", read_back);
 
     assert_eq!(read_back.unwrap(), maze);
@@ -61,11 +49,8 @@ fn test_output_and_read_back_tiny_maze_non_cubic() {
     let mut maze = SquareMaze::new_filled_with_entry_exit(2, 3, MazeCell::new(0, 0), MazeCell::new(1, 1));
     maze.carve(WallDirection::EAST, 0, 0);
 
-    let path = Path::new("./tests/tmp/plm_test_tiny_non_cubic.plm");
-    let out_res = plm::output(&path, &maze);
-    assert!(out_res.is_ok(), "write error = {:?}", out_res);
-
-    let read_back = plm::read(&path);
+    let out_res = plm::output_to_buf(&maze);
+    let read_back = plm::read_from_buf(&out_res);
     assert!(read_back.is_ok(), "read error = {:?}", read_back);
 
     assert_eq!(read_back.unwrap(), maze);
@@ -77,11 +62,8 @@ fn test_output_and_read_back_bigger_maze() {
     let seed = [1;16];
     gen::recursive(&mut maze, seed, MazeCell::new(0, 0));
 
-    let path = Path::new("./tests/tmp/plm_test_bigger_maze.plm");
-    let out_res = plm::output(&path, &maze);
-    assert!(out_res.is_ok(), "write error = {:?}", out_res);
-
-    let read_back = plm::read(&path);
+    let out_res = plm::output_to_buf(&maze);
+    let read_back = plm::read_from_buf(&out_res);
     assert!(read_back.is_ok(), "read error = {:?}", read_back);
 
     assert_eq!(read_back.unwrap(), maze);

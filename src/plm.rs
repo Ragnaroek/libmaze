@@ -1,8 +1,10 @@
+extern crate bytes;
 
 use std::path::Path;
 use std::io;
 use std::io::{Write, Read};
 use std::fs::OpenOptions;
+use self::bytes::{BytesMut, BufMut};
 use std::convert::TryInto;
 
 use super::square_maze::{SquareMaze, MazeCell};
@@ -18,61 +20,67 @@ pub fn output(path: &Path, maze: &SquareMaze) -> io::Result<()> {
             .write(true)
             .create(true)
             .open(path)?;
-    file.write_all(&['p' as u8, 'l' as u8, 'm' as u8])?;
-    file.write_all(&[0x01, 0x00])?; //version & flags
-    file.write_all(&[maze.width as u8, maze.height as u8,
-                     maze.entry.x as u8, maze.entry.y as u8,
-                     maze.exit.x as u8, maze.exit.y as u8])?;
-    file.write_all(&maze.horizontal_walls)?;
-    file.write_all(&maze.vertical_walls)?;
+
+    let buf = output_to_buf(maze);
+    file.write_all(&buf)?;
     return Ok(())
 }
 
-pub fn read(path: &Path) -> io::Result<SquareMaze> {
+pub fn output_to_buf(maze: &SquareMaze) -> BytesMut {
+    let mut buf = BytesMut::with_capacity(11 + maze.horizontal_walls.len() + maze.vertical_walls.len());
+    buf.put_slice(&['p' as u8, 'l' as u8, 'm' as u8]);
+    buf.put_slice(&[0x01, 0x00]); //version & flags
+    buf.put_slice(&[maze.width as u8, maze.height as u8,
+                     maze.entry.x as u8, maze.entry.y as u8,
+                     maze.exit.x as u8, maze.exit.y as u8]);
+    buf.put_slice(&maze.horizontal_walls);
+    buf.put_slice(&maze.vertical_walls);
+    return buf;
+}
 
-    let mut file = OpenOptions::new()
-            .read(true)
-            .open(path)?;
+fn read_maze_size(buf: &BytesMut) -> io::Result<(usize, usize)> {
+    let width = buf[5].try_into().unwrap();
+    let height = buf[6].try_into().unwrap();
+    Ok((width, height))
+}
 
-    let mut meta_data = [0;11];
-    let n = file.read(&mut meta_data)?;
-    if n != 11 {
+pub fn read_from_buf(buf: &BytesMut) -> io::Result<SquareMaze> {
+    let n = buf.len();
+    if n < 11 {
         return read_err("invalid file");
     }
-    if meta_data[0] != 'p' as u8 || meta_data[1] != 'l' as u8 || meta_data[2] != 'm' as u8 {
+    if buf[0] != 'p' as u8 || buf[1] != 'l' as u8 || buf[2] != 'm' as u8 {
         return read_err("not a plm file");
     }
-    if meta_data[3] != 0x01 {
+    if buf[3] != 0x01 {
         return read_err("illegal maze type");
     }
-    if meta_data[4] != 0x0 {
+    if buf[4] != 0x0 {
         return read_err("illegal flags");
     }
 
-    let width = meta_data[5].try_into().unwrap();
-    let height = meta_data[6].try_into().unwrap();
-    let entry_x = meta_data[7];
-    let entry_y = meta_data[8];
-    let exit_x = meta_data[9];
-    let exit_y = meta_data[10];
+    let width = buf[5].try_into().unwrap();
+    let height = buf[6].try_into().unwrap();
+    let entry_x = buf[7];
+    let entry_y = buf[8];
+    let exit_x = buf[9];
+    let exit_y = buf[10];
 
     let h_size = ((width*(height+1)) as f32 / 8.0).ceil() as usize;
     let v_size = (((width+1)*height) as f32 / 8.0).ceil() as usize;
 
-    let mut maze_data = Vec::new();
-    let n_data = file.read_to_end(&mut maze_data)?;
-    if n_data != h_size + v_size {
+    if n != 11+h_size + v_size {
         return read_err("invalid file, unexpected number of maze data");
     }
-
+    let offset = 11;
     let mut h_walls = Vec::with_capacity(h_size);
     for i in 0..h_size {
-        h_walls.insert(i, maze_data[i]);
+        h_walls.insert(i, buf[offset+i]);
     }
 
     let mut v_walls = Vec::with_capacity(v_size);
     for i in 0..v_size {
-        v_walls.insert(i, maze_data[h_size+i]);
+        v_walls.insert(i, buf[offset+h_size+i]);
     }
 
     Ok(SquareMaze{
@@ -83,6 +91,38 @@ pub fn read(path: &Path) -> io::Result<SquareMaze> {
         entry: MazeCell::new(entry_x as usize, entry_y as usize),
         exit: MazeCell::new(exit_x as usize, exit_y as usize)
     })
+}
+
+pub fn read(path: &Path) -> io::Result<SquareMaze> {
+
+    let mut buf_size = BytesMut::with_capacity(11);
+    buf_size.resize(11, 0);
+    let mut file_size = OpenOptions::new()
+            .read(true)
+            .open(path)?;
+
+    let n = file_size.read(&mut buf_size)?;
+    if n != 11 {
+        return read_err("invalid file header");
+    }
+    let (width, height) = read_maze_size(&buf_size)?;
+
+    let h_size = ((width*(height+1)) as f32 / 8.0).ceil() as usize;
+    let v_size = (((width+1)*height) as f32 / 8.0).ceil() as usize;
+
+    let data_size = 11+h_size+v_size;
+    let mut buf = BytesMut::with_capacity(data_size);
+    buf.resize(data_size, 0);
+    let mut file = OpenOptions::new()
+            .read(true)
+            .open(path)?;
+    let n = file.read(&mut buf)?;
+    println!("### n = {}, data_size = {}", n, data_size);
+    if n != data_size {
+        return read_err("invalid file, unexpected number of maze data");
+    }
+
+    read_from_buf(&buf)
 }
 
 fn read_err(message: &str) -> io::Result<SquareMaze> {
