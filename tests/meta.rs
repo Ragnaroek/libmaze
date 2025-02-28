@@ -1,7 +1,7 @@
 extern crate maze;
 
+use maze::meta::{Distance, is_dead_end, to_hex_string};
 use maze::square_maze::{SquareMaze, WallDirection};
-use maze::meta::{is_dead_end, to_hex_string, Distance};
 
 #[test]
 fn should_convert_all_zero_array_to_hex() {
@@ -50,10 +50,10 @@ fn should_init_distance_struct_with_all_zeros() {
 #[test]
 fn should_set_distance() {
     let mut dist = Distance::new(10, 10);
-    assert_eq!(dist.distance(0,0), 0);
-    dist.set(0,0, 666);
-    assert_eq!(dist.distance(0,0), 666);
+    assert_eq!(dist.distance(0, 0), 0);
+    dist.set(0, 0, 666);
+    assert_eq!(dist.distance(0, 0), 666);
 
-    dist.set(9,9, 42);
+    dist.set(9, 9, 42);
     assert_eq!(dist.distance(9, 9), 42);
 }

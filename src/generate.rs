@@ -1,11 +1,11 @@
 extern crate rand;
 extern crate rand_xorshift;
 
-use super::square_maze::{SquareMaze, MazeCell, dir_ix_x, dir_ix_y};
-use super::visited::{Visited};
-use self::rand::{SeedableRng};
-use self::rand::seq::{SliceRandom};
-use self::rand_xorshift::{XorShiftRng};
+use self::rand::SeedableRng;
+use self::rand::seq::IndexedRandom;
+use self::rand_xorshift::XorShiftRng;
+use super::square_maze::{MazeCell, SquareMaze, dir_ix_x, dir_ix_y};
+use super::visited::Visited;
 
 pub fn recursive(maze: &mut SquareMaze, seed: [u8; 16], start: MazeCell) {
     let mut rnd = XorShiftRng::from_seed(seed);
@@ -25,7 +25,10 @@ pub fn recursive(maze: &mut SquareMaze, seed: [u8; 16], start: MazeCell) {
     // TODO loop until stack is empty! (need_to_visit is redundant)
     while need_to_visit > 0 {
         let neighbours = maze.neighbours(x, y);
-        let unvisited_neighbours = neighbours.iter().filter(|n| !visit.visited_neighbour(x, y, **n)).collect::<Vec<_>>();
+        let unvisited_neighbours = neighbours
+            .iter()
+            .filter(|n| !visit.visited_neighbour(x, y, **n))
+            .collect::<Vec<_>>();
         let walk = unvisited_neighbours.choose(&mut rnd);
 
         visit.mark_visited(x, y);
@@ -39,8 +42,8 @@ pub fn recursive(maze: &mut SquareMaze, seed: [u8; 16], start: MazeCell) {
                 x_stack.push(x);
                 y_stack.push(y);
 
-                need_to_visit = need_to_visit-1;
-            },
+                need_to_visit = need_to_visit - 1;
+            }
             None => {
                 let x_ = x_stack.pop();
                 let y_ = y_stack.pop();

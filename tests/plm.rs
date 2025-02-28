@@ -1,19 +1,20 @@
 extern crate maze;
 
+use maze::generate;
 use maze::plm;
-use maze::square_maze::{SquareMaze, MazeCell, WallDirection};
-use maze::gen;
+use maze::square_maze::{MazeCell, SquareMaze, WallDirection};
 
 //write
 
 #[test]
 fn test_output_plm() {
-    let mut maze = SquareMaze::new_filled_with_entry_exit(2, 2, MazeCell::new(0, 0), MazeCell::new(1, 1));
+    let mut maze =
+        SquareMaze::new_filled_with_entry_exit(2, 2, MazeCell::new(0, 0), MazeCell::new(1, 1));
     maze.carve(WallDirection::EAST, 0, 0);
 
     let data = plm::output_to_buf(&maze);
 
-    assert_eq!(11+1+1, data.len());
+    assert_eq!(11 + 1 + 1, data.len());
     assert_eq!('p' as u8, data[0]);
     assert_eq!('l' as u8, data[1]);
     assert_eq!('m' as u8, data[2]);
@@ -27,14 +28,19 @@ fn test_output_plm() {
     assert_eq!(1, data[10]);
 
     assert_eq!(0b11111111, data[11]);
-    assert_eq!(0b11111101, data[12], "exp 0b10111111, actual {:b}", data[12]);
+    assert_eq!(
+        0b11111101, data[12],
+        "exp 0b10111111, actual {:b}",
+        data[12]
+    );
 }
 
 // read
 
 #[test]
 fn test_output_and_read_back_tiny_maze() {
-    let mut maze = SquareMaze::new_filled_with_entry_exit(2, 2, MazeCell::new(0, 0), MazeCell::new(1, 1));
+    let mut maze =
+        SquareMaze::new_filled_with_entry_exit(2, 2, MazeCell::new(0, 0), MazeCell::new(1, 1));
     maze.carve(WallDirection::EAST, 0, 0);
 
     let out_res = plm::output_to_buf(&maze);
@@ -46,7 +52,8 @@ fn test_output_and_read_back_tiny_maze() {
 
 #[test]
 fn test_output_and_read_back_tiny_maze_non_cubic() {
-    let mut maze = SquareMaze::new_filled_with_entry_exit(2, 3, MazeCell::new(0, 0), MazeCell::new(1, 1));
+    let mut maze =
+        SquareMaze::new_filled_with_entry_exit(2, 3, MazeCell::new(0, 0), MazeCell::new(1, 1));
     maze.carve(WallDirection::EAST, 0, 0);
 
     let out_res = plm::output_to_buf(&maze);
@@ -58,9 +65,10 @@ fn test_output_and_read_back_tiny_maze_non_cubic() {
 
 #[test]
 fn test_output_and_read_back_bigger_maze() {
-    let mut maze = SquareMaze::new_filled_with_entry_exit(19, 25, MazeCell::new(0, 0), MazeCell::new(19, 25));
-    let seed = [1;16];
-    gen::recursive(&mut maze, seed, MazeCell::new(0, 0));
+    let mut maze =
+        SquareMaze::new_filled_with_entry_exit(19, 25, MazeCell::new(0, 0), MazeCell::new(19, 25));
+    let seed = [1; 16];
+    generate::recursive(&mut maze, seed, MazeCell::new(0, 0));
 
     let out_res = plm::output_to_buf(&maze);
     let read_back = plm::read_from_buf(&out_res);

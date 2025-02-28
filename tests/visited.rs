@@ -1,7 +1,7 @@
 extern crate maze;
 
-use maze::visited::{Visited};
-use maze::square_maze::{WallDirection};
+use maze::square_maze::WallDirection;
+use maze::visited::Visited;
 
 #[test]
 #[should_panic]
@@ -23,21 +23,21 @@ fn should_have_initial_visited_state_of_false() {
 #[test]
 fn should_maintain_visited_state() {
     let mut vis = Visited::new(10, 10);
-    assert!(!vis.visited(0,0));
-    vis.mark_visited(0,0);
-    assert!(vis.visited(0,0));
+    assert!(!vis.visited(0, 0));
+    vis.mark_visited(0, 0);
+    assert!(vis.visited(0, 0));
 
-    assert!(!vis.visited(0,9));
-    vis.mark_visited(0,9);
-    assert!(vis.visited(0,9));
+    assert!(!vis.visited(0, 9));
+    vis.mark_visited(0, 9);
+    assert!(vis.visited(0, 9));
 
-    assert!(!vis.visited(9,0));
-    vis.mark_visited(9,0);
-    assert!(vis.visited(9,0));
+    assert!(!vis.visited(9, 0));
+    vis.mark_visited(9, 0);
+    assert!(vis.visited(9, 0));
 
-    assert!(!vis.visited(9,9));
-    vis.mark_visited(9,9);
-    assert!(vis.visited(9,9));
+    assert!(!vis.visited(9, 9));
+    vis.mark_visited(9, 9);
+    assert!(vis.visited(9, 9));
 }
 
 #[test]

@@ -1,13 +1,11 @@
 extern crate maze;
 
-use maze::square_maze::{SquareMaze, WallDirection, MazeCell};
-use maze::meta::{to_hex_string, MetaData};
-use maze::gen;
-
+use maze::generate;
+use maze::meta::{MetaData, to_hex_string};
+use maze::square_maze::{MazeCell, SquareMaze, WallDirection};
 
 #[test]
 fn should_have_all_cells_walled_after_init() {
-
     let maze = SquareMaze::new_filled(10, 10);
 
     for x in 0..10 {
@@ -35,7 +33,6 @@ fn minimal_maze_carving() {
     maze.carve(WallDirection::NORTH, 0, 0);
     assert!(!maze.wall(WallDirection::NORTH, 0, 0));
     assert!(!maze.wall(WallDirection::SOUTH, 0, 1));
-
 }
 
 #[test]
@@ -104,27 +101,75 @@ fn should_panic_if_index_out_of_range_on_neighbours() {
 #[test]
 fn should_get_neighbours() {
     let maze = SquareMaze::new_filled(10, 10);
-    assert_eq!(maze.neighbours(0,0), [WallDirection::NORTH, WallDirection::EAST]);
-    assert_eq!(maze.neighbours(0,1), [WallDirection::NORTH, WallDirection::EAST, WallDirection::SOUTH]);
-    assert_eq!(maze.neighbours(0,9), [WallDirection::EAST, WallDirection::SOUTH]);
-    assert_eq!(maze.neighbours(5,9), [WallDirection::EAST, WallDirection::SOUTH, WallDirection::WEST]);
-    assert_eq!(maze.neighbours(9,9), [WallDirection::SOUTH, WallDirection::WEST]);
-    assert_eq!(maze.neighbours(9,5), [WallDirection::NORTH, WallDirection::SOUTH, WallDirection::WEST]);
-    assert_eq!(maze.neighbours(9,0), [WallDirection::NORTH, WallDirection::WEST]);
-    assert_eq!(maze.neighbours(5,0), [WallDirection::NORTH, WallDirection::EAST, WallDirection::WEST]);
+    assert_eq!(
+        maze.neighbours(0, 0),
+        [WallDirection::NORTH, WallDirection::EAST]
+    );
+    assert_eq!(
+        maze.neighbours(0, 1),
+        [
+            WallDirection::NORTH,
+            WallDirection::EAST,
+            WallDirection::SOUTH
+        ]
+    );
+    assert_eq!(
+        maze.neighbours(0, 9),
+        [WallDirection::EAST, WallDirection::SOUTH]
+    );
+    assert_eq!(
+        maze.neighbours(5, 9),
+        [
+            WallDirection::EAST,
+            WallDirection::SOUTH,
+            WallDirection::WEST
+        ]
+    );
+    assert_eq!(
+        maze.neighbours(9, 9),
+        [WallDirection::SOUTH, WallDirection::WEST]
+    );
+    assert_eq!(
+        maze.neighbours(9, 5),
+        [
+            WallDirection::NORTH,
+            WallDirection::SOUTH,
+            WallDirection::WEST
+        ]
+    );
+    assert_eq!(
+        maze.neighbours(9, 0),
+        [WallDirection::NORTH, WallDirection::WEST]
+    );
+    assert_eq!(
+        maze.neighbours(5, 0),
+        [
+            WallDirection::NORTH,
+            WallDirection::EAST,
+            WallDirection::WEST
+        ]
+    );
 
-    assert_eq!(maze.neighbours(5,5), [WallDirection::NORTH, WallDirection::EAST, WallDirection::SOUTH, WallDirection::WEST]);
+    assert_eq!(
+        maze.neighbours(5, 5),
+        [
+            WallDirection::NORTH,
+            WallDirection::EAST,
+            WallDirection::SOUTH,
+            WallDirection::WEST
+        ]
+    );
 }
 
 #[test] //from a test generation
 fn generated_maze_edge_invariants() {
     let width = 200;
     let height = 50;
-    let mut maze = SquareMaze::new_filled((width-2)/3, (height-1)/2);
+    let mut maze = SquareMaze::new_filled((width - 2) / 3, (height - 1) / 2);
     let seed = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
     let mut meta = MetaData::new_empty();
     meta.seed = to_hex_string(seed).to_string();
-    gen::recursive(&mut maze, seed, MazeCell::new(0, 0));
+    generate::recursive(&mut maze, seed, MazeCell::new(0, 0));
 
     assert!(maze.wall(WallDirection::SOUTH, 1, 13) == maze.wall(WallDirection::NORTH, 1, 12));
 }
